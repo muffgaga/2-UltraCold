@@ -1,0 +1,140 @@
+@Library("jenlib") _
+
+timestamps {
+
+	addBuildParameter(string(
+			name: 'CONTAINER_IMAGE',
+			defaultValue: "/containers/testing/f27_c21380p5_2023-10-16_2.img"
+	))
+	addBuildParameter(string(
+			name: 'CONTAINER_APP',
+			defaultValue: "niklas"
+	))
+
+	stage('Checkout') {
+		runOnSlave(label: "frontend") {
+			checkout scm
+		}
+	}
+
+	inSingularity(app: params.CONTAINER_APP, image: params.CONTAINER_IMAGE) {
+
+		stage('Configure') {
+			onSlurmResource(partition: "jenkins",
+					time: 60,
+					"cpus-per-task": 8) {
+				dir('build') {
+					jesh "$WORKSPACE/.ci/01-cmake.sh"
+				}
+			}
+		}
+
+		stage('Build & Install') {
+			onSlurmResource(partition: "jenkins",
+					time: 120,
+					"cpus-per-task": 8) {
+				dir('build') {
+					jesh "$WORKSPACE/.ci/02-make-install.sh"
+				}
+			}
+		}
+
+		stage('Example-1') {
+			onSlurmResource(partition: "jenkins",
+					time: 60,
+					"cpus-per-task": 8) {
+				dir('examples/example-1') {
+					dir('build') {
+						jesh "$WORKSPACE/.ci/01-cmake.sh"
+						jesh "$WORKSPACE/.ci/02-make.sh make"
+					}
+					// no executable?
+				}
+			}
+		}
+
+		stage('Example-2') {
+			onSlurmResource(partition: "jenkins",
+					time: 60,
+					"cpus-per-task": 8) {
+				dir('examples/example-2') {
+					dir('build') {
+						jesh "$WORKSPACE/.ci/01-cmake.sh"
+						jesh "$WORKSPACE/.ci/02-make.sh"
+					}
+					// no executable?
+				}
+			}
+		}
+
+		stage('Example-3') {
+			onSlurmResource(partition: "jenkins",
+					time: 60,
+					"cpus-per-task": 8) {
+				dir('examples/example-3') {
+					dir('build') {
+						jesh "$WORKSPACE/.ci/01-cmake.sh"
+						jesh "$WORKSPACE/.ci/02-make.sh"
+					}
+					jesh "$WORKSPACE/.ci/envwrap.sh build/example-3"
+				}
+			}
+		}
+
+		stage('Example-4') {
+			onSlurmResource(partition: "jenkins",
+					time: 60,
+					"cpus-per-task": 8) {
+				dir('examples/example-4') {
+					dir('build') {
+						jesh "$WORKSPACE/.ci/01-cmake.sh"
+						jesh "$WORKSPACE/.ci/02-make.sh"
+					}
+					jesh "$WORKSPACE/.ci/envwrap.sh build/example-4"
+				}
+			}
+		}
+
+		stage('Example-5') {
+			onSlurmResource(partition: "jenkins",
+					time: 60,
+					"cpus-per-task": 8) {
+				dir('examples/example-5') {
+					dir('build') {
+						jesh "$WORKSPACE/.ci/01-cmake.sh"
+						jesh "$WORKSPACE/.ci/02-make.sh"
+					}
+					// no executable?
+				}
+			}
+		}
+
+		stage('Example-6') {
+			onSlurmResource(partition: "jenkins",
+					time: 60,
+					"cpus-per-task": 8) {
+				dir('examples/example-6') {
+					dir('build') {
+						jesh "$WORKSPACE/.ci/01-cmake.sh"
+						jesh "$WORKSPACE/.ci/02-make.sh"
+					}
+					// no executable?
+				}
+			}
+		}
+
+		stage('Example-7') {
+			onSlurmResource(partition: "jenkins",
+					time: 60,
+					"cpus-per-task": 8) {
+				dir('examples/example-7') {
+					dir('build') {
+						jesh "$WORKSPACE/.ci/01-cmake.sh"
+						jesh "$WORKSPACE/.ci/02-make.sh"
+					}
+					// no executable?
+				}
+			}
+		}
+	}
+}
