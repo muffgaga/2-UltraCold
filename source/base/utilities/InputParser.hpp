@@ -93,10 +93,11 @@ namespace UltraCold
         {
             public:  
 
-                InputParser(char* input_file_name);
+                InputParser(const char* input_file_name);
                 ~InputParser();
 
                 // Read input file and initialize the input_list map 
+
                 void read_input_file();
 
                 // Retrieve inputs casting to the appropriate type
@@ -113,7 +114,7 @@ namespace UltraCold
 
                 // Internal variable members 
 
-                char* input_file_name;
+                std::string input_file_name;
                 std::ifstream ifs;
                 std::map<std::string,std::string> input_list;
 

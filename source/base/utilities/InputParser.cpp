@@ -17,6 +17,8 @@
 
 #include "InputParser.hpp"
 
+#include <cstdlib>
+
 namespace UltraCold{
 
     namespace Tools
@@ -33,7 +35,7 @@ namespace UltraCold{
          * 
         */
 
-        InputParser::InputParser(char* input_file_name)
+        InputParser::InputParser(char const* input_file_name)
         {
             
             this->input_file_name = input_file_name;
@@ -49,7 +51,7 @@ namespace UltraCold{
                     << "\n\n"
                     <<
                 std::endl;
-                std::exit(1);
+                std::exit(EXIT_FAILURE);
             }
         }
 
@@ -141,7 +143,7 @@ namespace UltraCold{
                             << "\n\n"
                             <<
                         std::endl;
-                        std::exit(1);
+                        std::exit(EXIT_FAILURE);
                     }
 
                     // If an input instead is found, split its name from its value and put them in the input_list map
@@ -220,7 +222,7 @@ namespace UltraCold{
                     << "************************************************************\n"
                     <<
                 std::endl;
-                std::exit(1);
+                std::exit(EXIT_FAILURE);
             }
 
             // ... otherwise, return its value as a string.
