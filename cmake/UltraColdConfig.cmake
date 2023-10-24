@@ -16,21 +16,18 @@ include(UltraColdTargets)
 
 macro(ULTRACOLD_SETUP_TARGET target)
 
-    #-------------------------------------
-    # Set the compilers as the Intel ones
-    #-------------------------------------
+    if(CMAKE_CXX_COMPILER_ID MATCHES Intel)
 
-    set(CMAKE_CXX_COMPILER icpc)
-    set(CMAKE_C_COMPILER icc)
+        #---------------------------
+        # Set useful compiler flags
+        #---------------------------
 
-    #----------------------------------------------
-    # Set the correct flags for linking with mkl
-    #----------------------------------------------
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "2021.5.0.20211109")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mkl")
+        else()
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -qmkl")
+        endif()
 
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "2021.5.0.20211109")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mkl")
-    else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -qmkl")
     endif()
 
     #----------------------------------------
@@ -65,18 +62,19 @@ endmacro()
 
 macro(ULTRACOLD_SETUP_TARGET_WITH_CUDA target)
 
-    #--------------------------------------------
-    # Still need a c++ compiler. Set it still as
-    # as the Intel one, plus link to MKL
-    #--------------------------------------------
 
-    set(CMAKE_CXX_COMPILER icpc)
-    set(CMAKE_C_COMPILER icc)
+    if(CMAKE_CXX_COMPILER_ID MATCHES Intel)
 
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "2021.5.0.20211109")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mkl")
-    else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -qmkl")
+        #---------------------------
+        # Set useful compiler flags
+        #---------------------------
+
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "2021.5.0.20211109")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mkl")
+        else()
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -qmkl")
+        endif()
+
     endif()
 
     #----------------------------------------
@@ -90,9 +88,7 @@ macro(ULTRACOLD_SETUP_TARGET_WITH_CUDA target)
     # CUDA resolve its own symbols.
     #----------------------------------------------------------
 
-    find_package(CUDA 11.0 REQUIRED)
     enable_language(CUDA)
-    set(CMAKE_CUDA_COMPILER nvcc)
     set_target_properties(${target} PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
     target_include_directories(${target} PUBLIC "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
     target_link_libraries(${target} PUBLIC "${CUDA_LIBRARIES}" -lcufft)
