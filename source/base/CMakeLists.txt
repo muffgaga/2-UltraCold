@@ -1,23 +1,38 @@
-#-----------------------------------------------------------------
-# Configure, build and install the bundled version of arpack-ng
-#-----------------------------------------------------------------
+#-------------------
+# Find arpack-ng
+#-------------------
 
-set(ARPACK_DIR "${CMAKE_INSTALL_PREFIX}/base/bundled/arpack-ng")
+find_package(arpack-ng 3.9 HINTS ${ARPACK_DIR} $ENV{ARPACK_DIR})
 
-execute_process(
-        COMMAND ./configure_bundled.sh ${ARPACK_DIR}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bundled
-        RESULT_VARIABLE arpack-ng-success
-)
+#-----------------------------------------------------------------------------
+# If not found: Configure, build and install the bundled version of arpack-ng
+#----------------------------------------------------------------------------
 
-if(arpack-ng-success EQUAL "1")
-    message(FATAL_ERROR
-            "----------------------------------------------------------------------------\n"
-            "There was an error while trying to build/test/install arpack-ng\n"
-            "Such errors typically arise when environment variables for Intel's compilers "
-            "or for MKL are not set correctly.\n"
-            "Check these variables and try to re-run cmake.\n"
-            "----------------------------------------------------------------------------\n")
+if(NOT arpack-ng_FOUND)
+
+	message(STATUS "arpack-ng wasn't found, building vendored version")
+
+	set(ARPACK_DIR "${CMAKE_INSTALL_PREFIX}/base/bundled/arpack-ng")
+
+	execute_process(
+	        COMMAND ./configure_bundled.sh ${ARPACK_DIR}
+	        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bundled
+	        RESULT_VARIABLE arpack-ng-success
+	)
+
+	if(arpack-ng-success EQUAL "1")
+	    message(FATAL_ERROR
+	            "----------------------------------------------------------------------------\n"
+	            "There was an error while trying to build/test/install arpack-ng\n"
+	            "Such errors typically arise when environment variables for Intel's compilers "
+	            "or for MKL are not set correctly.\n"
+	            "Check these variables and try to re-run cmake.\n"
+	            "----------------------------------------------------------------------------\n")
+	endif()
+
+	# retry to find it
+	find_package(arpack-ng 3.9 REQUIRED HINTS ${ARPACK_DIR} $ENV{ARPACK_DIR})
+
 endif()
 
 # Add subdirectories
