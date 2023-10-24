@@ -44,15 +44,6 @@ set_target_properties(cudaSolvers
         PROPERTIES
         CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
-#-----------------------------------------------------------------
-# Suppress generation of specific code for specific architecture
-#-----------------------------------------------------------------
-
-set_property(TARGET cudaSolvers
-        PROPERTY CUDA_ARCHITECTURES
-        OFF
-)
-
 #---------------------------------------
 # Enable separable compilation
 #---------------------------------------
